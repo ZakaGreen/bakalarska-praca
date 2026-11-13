@@ -1,3 +1,5 @@
+[English](README.md) · [Slovenčina](README.sk.md) · [Русский](README.ru.md)
+
 # Bachelor's Thesis — Future Events and Stock Returns
 
 **Ilia Liubotin · Applied Informatics · FEI STU, Bratislava**
