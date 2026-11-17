@@ -1,6 +1,5 @@
 {
   "date": "2026-11-17",
-  "revision": "simple Slovak",
   "pdf": "output/pdf/referat.pdf",
   "pages": 12,
   "pdf_sha256": "e5494aa94f44a4980141c8ebc04ec351ba4d2663b25e6dd84c0e365b42d4f3a9",
@@ -14,7 +13,6 @@
   ],
   "visual_review": {
     "all_pages_reviewed": true,
-    "render_directory": "/tmp/referat-simple-render",
     "final_iteration_reviewed_pages": [
       1,
       2,
