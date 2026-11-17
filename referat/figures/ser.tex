@@ -1,0 +1,18 @@
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[node distance=5mm and 8mm]
+\node[box,text width=3.3cm] (news) {Novinové články\\priradené firme};
+\node[box,text width=4.3cm,right=of news] (llm) {LLM získa udalosti\\a skontroluje ich};
+\node[box,text width=4.3cm,below=of llm] (events) {Trojice a identifikátory\\$z_e=e_s+e_a-e_o$};
+\node[box,text width=3.3cm,left=of events] (stock) {Identifikátor akcie\\učený vektor $z_i$};
+\node[box,text width=8.5cm,below=8mm of $(events.south)!0.5!(stock.south)$] (att) {CLS + udalosti + akcia $\longrightarrow$ attention\\deň: spojenie udalostí\\týždeň: aj spojenie dní};
+\node[box,text width=8.5cm,below=of att] (mlp) {Spoločný vektor $\longrightarrow$ MLP $\longrightarrow$ výnos $\widehat r_{i,t+1}$};
+\draw[arr] (news)--(llm);
+\draw[arr] (llm)--(events);
+\draw[arr] (events.south)--(att.north -| events.south);
+\draw[arr] (stock.south)--(att.north -| stock.south);
+\draw[arr] (att)--(mlp);
+\end{tikzpicture}
+\caption{Postup v SER. Vektory a prediktor sa učia podľa ďalších skutočných výnosov. Váhy LLM sa pri tomto učení nemenia. Vlastné spracovanie podľa \serref{kap.~2, obr.~1--3}.}
+\label{fig:ser}
+\end{figure}

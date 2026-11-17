@@ -1,0 +1,23 @@
+\section{Návrh pre bakalársku prácu}
+Táto časť opisuje môj návrh. Zo SER chcem využiť hlavne oddelenie dvoch úloh. Hotová LLM by spracovala text a menší učený model by predikoval výnos konkrétnej akcie. MENTOR ukazuje rozdiel medzi známymi a budúcimi udalosťami a použitie spätnej väzby po výsledku. Celý systém viacerých agentov však prvý prototyp nepotrebuje.
+
+Vstupom by bol opis možnej udalosti, jej termín a vtedy dostupná pravdepodobnosť. Poskytol by ich externý zdroj, napríklad predikčný trh. LLM by pripravila štruktúrovaný záznam. Musela by zachovať podmienky, termín aj to, že udalosť ešte nemusí nastať. Prediktor by použil tento záznam, pravdepodobnosť a trhové údaje na odhad výnosu. Nové informácie by mohli zmeniť predikciu aj rozhodnutie o pozícii bez nového učenia. Vlastné vytváranie scenárov a ich pravdepodobností pomocou LLM zostáva možným rozšírením.
+
+SER sa učí odhadovať výnos po zverejnení správy. Môj návrh sa týka očakávaní pred udalosťou. Model naučený na správach preto nemusí správne odhadnúť výnos pri konkrétnom budúcom scenári. Investori už môžu udalosť očakávať. Časť očakávania môže byť v cene a dôležitý môže byť rozdiel medzi očakávaním a skutočným výsledkom.
+
+Tréningový príklad by preto obsahoval iba informácie dostupné v minulom okamihu rozhodnutia $t$: vtedajší opis, pravdepodobnosť $p_t$ a stav trhu. Cieľom by bol skutočný výnos od najskoršieho možného obchodu do konca zvoleného obdobia. Neskoršiu pravdepodobnosť, ktorá už pozná výsledok, nemožno použiť namiesto pôvodnej. Ani rozdelenie aktualizácií jednej udalosti medzi učenie a test nesmie prezradiť budúci výsledok.
+
+Pravdepodobnosť udalosti nie je pravdepodobnosťou rastu akcie. Pre udalosť $A$, dostupné informácie $\mathcal I_t$ a $p_t=P(A\mid\mathcal I_t)$ platí
+\begin{equation}
+\mathbb E[r\mid\mathcal I_t]
+=p_t\,\mathbb E[r\mid A,\mathcal I_t]
+ +(1-p_t)\,\mathbb E[r\mid\neg A,\mathcal I_t].
+\label{eq:expectation}
+\end{equation}
+Symbol $\mathbb E$ označuje očakávanú hodnotu. Prvá časť pravej strany opisuje výnos, keď udalosť nastane. Druhá opisuje výnos, keď nenastane. Obe časti majú váhu podľa pravdepodobnosti. Je to matematické vysvetlenie, nie vzorec prevzatý z článkov.
+
+Napríklad pri pravdepodobnosti 0,6, očakávanom výnose $+4\,\%$ pri udalosti a $-2\,\%$ bez nej dostaneme $0{,}6\cdot4\,\%+0{,}4\cdot(-2\,\%)=1{,}6\,\%$. Ide iba o ilustračné čísla. Výpočet $0{,}6\cdot4\,\%$ by vynechal druhý prípad. Ak model už odhaduje celkový očakávaný výnos, netreba ho automaticky znovu násobiť pravdepodobnosťou. Externá pravdepodobnosť môže byť zle kalibrovaná. Ani odhad výnosu pri udalosti sám nedokazuje jej príčinný účinok.
+
+Konkrétne udalosti, akcie, zdroj a dĺžka predikovaného obdobia ešte nie sú vybrané. Rozhodnutia Federálneho rezervného systému sú iba kandidátom na overenie údajov. Hotový spojený dataset, jeho dostatočná veľkosť ani úspešnosť prototypu zatiaľ nie sú potvrdené.
+
+Na učenie treba použiť staršie údaje a na test novšie. Model chcem porovnať s jednoduchou metódou, ktorá používa iba ceny, a s verziami bez udalostí alebo pravdepodobností. Chybu veľkosti výnosu, správnosť smeru a výsledok obchodovania po nákladoch treba merať zvlášť.

@@ -1,0 +1,45 @@
+\section{SER: testovanie a výsledky}
+\subsection{Rozdelenie údajov a porovnanie modelov}
+Autori oddeľujú údaje na učenie od údajov na testovanie podľa času. V základnom nastavení sa model učí na piatich rokoch a testuje na ďalšom roku. Napríklad prvý model používa na učenie roky 2003--2007 a na test rok 2008. Potom sa celé obdobie posunie o rok. Takto autori testujú roky 2008--2022. Pri neskorších testoch používajú dlhšie obdobie učenia, pretože majú menej novších údajov. Nie všetky tréningové obdobia teda trvajú presne päť rokov \serref{kap.~3.2, poznámka pod čiarou~5}.
+
+V každom tréningovom období sa embeddingy vytvoria a učia od začiatku. Model dostáva najviac 30 udalostí pre jednu firmu a deň. Ak ich je viac, časť sa vynechá. Ak ich je menej, voľné miesta sa doplnia nulami. Všetky vstupy tak majú rovnakú veľkosť \serref{kap.~3.2}.
+
+Nastavenia ako rýchlosť učenia alebo počet vrstiev sa nazývajú hyperparametre. Autori rozdelia 15 modelov do troch skupín po päť. V každej skupine vyberú hyperparametre na tréningových údajoch prvého modelu. Použijú päťnásobnú krížovú validáciu, teda overovanie na piatich častiach údajov. Vybrané nastavenia potom použijú pre všetkých päť modelov v skupine. Článok presne neuvádza časové poradie častí vnútornej validácie. Preto nemožno tvrdiť, že pri každom takomto overení boli použité iba staršie údaje \serref{kap.~3.2}.
+
+SER sa porovnáva s metódami RavenPack a Loughran--McDonald, ktoré pracujú so sentimentom správ. Sentiment opisuje, či má text skôr kladný alebo záporný tón. Ďalšie dve metódy používajú textové vektory z BERT a FinBERT. Tieto vektory majú 768 čísel a na predikciu výnosu sa používa jednovrstvový regresný model \serref{kap.~3.2}. Porovnávajú sa teda celé systémy s rôznymi časťami. Z výsledkov nemožno oddeliť, koľko zlepšenia priniesli udalosti a koľko zložitejší prediktor SER.
+
+\subsection{Čo ukázali výsledky}
+Autori zoradia akcie podľa predikovaného výnosu a rozdelia ich do piatich skupín. Používajú iba akcie s dostupnými správami. V každej skupine majú akcie rovnakú váhu. Výsledok portfólia long--short vypočítajú ako rozdiel výnosov najvyššej a najnižšej skupiny. Tým overujú, či model vie odlíšiť akcie s vyšším a nižším budúcim výnosom \serref{kap.~3.3}.
+
+\begin{table}[htbp]
+\centering
+\caption{Výsledky SER a ďalších metód. AR je výnos prepočítaný na rok, SR je Sharpeho pomer. Hodnoty pochádzajú z \serref{tab.~2}; testovacie obdobie 2008--2022.}
+\label{tab:results}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+& \multicolumn{2}{c}{Denná predikcia} & \multicolumn{2}{c}{Týždenná predikcia}\\
+\midrule
+Metóda & AR (\%) & SR & AR (\%) & SR\\
+\midrule
+Loughran--McDonald & 2,04 & 0,08 & 0,15 & $-0,13$\\
+RavenPack & 0,99 & $-0,01$ & 1,01 & 0,01\\
+BERT & 2,12 & 0,09 & 3,56 & 0,40\\
+FinBERT & 8,59 & 0,61 & 3,78 & 0,44\\
+SER & \textbf{10,93} & \textbf{0,78} & \textbf{5,23} & \textbf{0,63}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+SER má v tabuľke najvyšší výnos AR aj Sharpeho pomer SR pri oboch úlohách. Sharpeho pomer hodnotí výnos aj vzhľadom na jeho kolísanie. Hodnota 10,93\,\% je výnos prepočítaný na rok pri použití denných predikcií. Neznamená zisk 10,93\,\% za jeden deň. Pri týždenných predikciách je tento ročný ukazovateľ 5,23\,\% \serref{tab.~2}.
+
+Autori uvádzajú aj alfu voči päťfaktorovému modelu Fama--French. Alfa ukazuje časť výnosu, ktorú tento faktorový model nevysvetľuje. Jej ročná hodnota je 10,58\,\% pri dennej a 4,21\,\% pri týždennej úlohe. Zodpovedajúce $t$-štatistiky sú 3,17 a 2,46 \serref{tab.~2}. Ďalší test, regresia Fama--MacBeth, skúma vzťah medzi predikciami a skutočnými ďalšími výnosmi rôznych akcií. Zohľadňuje aj kontrolné údaje, napríklad predchádzajúce výnosy \serref{kap.~3.4, tab.~4}.
+
+Dôležitý je aj čas obchodu. V tabuľke~3 pôvodného článku autori skúmajú oneskorený vstup. Pri posune z $+1T$ na $+2T$ sa obchod oneskorí o ďalší deň alebo týždeň podľa úlohy. Ročný ukazovateľ výnosu potom klesne na $-3,1\,\%$ pri dennej a $-0,07\,\%$ pri týždennej úlohe \serref{kap.~3.3, tab.~3}. Výsledok modelu teda nemusí byť rovnako užitočný aj neskôr. Pri vlastnom prototype bude potrebné presne určiť čas vstupu do obchodu.
+
+\subsection{Čo z výsledkov ešte nevieme}
+Nasledujúce body sú mojím hodnotením výsledkov. Testy ukazujú, že SER mal v skúmaných údajoch užitočný signál na predikciu výnosov. Nehovoria však priamo, ako presne odhadne percentuálny výnos jednej konkrétnej akcie. Tiež automaticky nedokazujú zisk po započítaní všetkých obchodných nákladov. V opise hlavného portfóliového testu nie je uvedený presný model týchto nákladov \serref{kap.~3.3, tab.~2--3}.
+
+Treba myslieť aj na únik informácií z budúcnosti. Znamená to, že model pri historickom teste použije informáciu, ktorú v danom čase ešte nemohol poznať. Staré články v SER spracúva novšia LLM. Používa sa aj databáza DBpedia. Učenie embeddingov od začiatku samo nepotvrdzuje, že tieto zdroje neobsahovali neskoršie poznatky. Je to riziko na ďalšie overenie. Nie je to dôkaz, že výsledky článku sú nesprávne.
+
+Na zopakovanie experimentu tiež chýbajú niektoré podrobnosti. Kapitola~3.2 neuvádza úplný zoznam číselných nastavení modelu. Hlavný text opisuje údaje za roky 2003--2022, ale príloha OA.1.1 uvádza zber článkov až do konca 2023. Pri výsledkoch preto používam testovacie obdobie 2008--2022, ktoré je uvedené pri tabuľkách. Pred vlastným experimentom bude potrebné overiť aj prístup k správam a cenovým údajom.

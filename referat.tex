@@ -1,0 +1,44 @@
+\documentclass[sp,article]{FEIstyle}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,fit,babel}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{array}
+\addbibresource{referat/bibliography.bib}
+\DeclareFieldFormat{doi}{\mkbibacro{DOI}\addcolon\space\href{https://doi.org/#1}{\mbox{\nolinkurl{#1}}}}
+\hypersetup{pdftitle={Predikcia výnosov akcií pomocou udalostí a jazykových modelov},pdfauthor={Ilia Liubotin}}
+\emergencystretch=1.5em
+\captionsetup{font=small,labelfont=bf}
+\newcommand{\serref}[1]{\cite[#1]{li2025ser}}
+\newcommand{\mentorref}[1]{\cite[#1]{chen2025mentor}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\tikzset{box/.style={draw=black!65,rounded corners=2pt,fill=black!3,align=center,font=\small,inner sep=6pt},arr/.style={-{Latex[length=2mm]},thick},note/.style={font=\footnotesize,align=center}}
+\begin{document}
+\begin{titlepage}
+\centering
+{\large Slovenská technická univerzita v Bratislave\par}
+{\large Fakulta elektrotechniky a informatiky\par}
+\vspace{3cm}
+{\LARGE\bfseries Predikcia výnosov akcií pomocou udalostí a jazykových modelov\par}
+\vspace{1.2cm}
+{\large Priebežná písomná práca\par}
+{\large Bakalársky projekt 1\par}
+\vfill
+\begin{tabular}{@{}ll@{}}
+Študent: & Ilia Liubotin\\
+Vedúci práce: & prof. Dr. rer. nat. Martin Drozda
+\end{tabular}
+\vspace{2cm}
+\par Bratislava, november 2026
+\end{titlepage}
+\input{referat/sections/01-introduction}
+\input{referat/sections/02-task-data}
+\input{referat/sections/03-extraction}
+\input{referat/sections/04-architecture}
+\input{referat/sections/05-experiments}
+\input{referat/sections/06-mentor}
+\FloatBarrier
+\input{referat/sections/07-application}
+\input{referat/sections/08-conclusion}
+\printbibliography[title={Literatúra}]
+\end{document}

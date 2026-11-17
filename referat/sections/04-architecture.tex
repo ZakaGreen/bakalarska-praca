@@ -1,0 +1,45 @@
+\section{SER: ako model predikuje výnos}
+\subsection{Spojenie udalostí pomocou attention}
+K jednej firme môže v jeden deň patriť viac udalostí. Nie všetky musia byť rovnako dôležité. Model ich preto spája pomocou mechanizmu \emph{attention}, teda mechanizmu pozornosti. Tento mechanizmus pracuje s vektormi udalostí a s vektorom akcie. Schému modelu ukazuje obrázok~\ref{fig:ser}.
+
+Na začiatok vstupu sa pridá špeciálny učený vektor $z_{\mathrm{CLS}}$. Jeho úlohou je zhrnúť informácie z ostatných vstupov. Vektory sa uložia do riadkov jednej matice:
+\begin{equation}
+Z^{(0)}_{i,t}=[z_{\mathrm{CLS}};z_{e_1};\ldots;z_{e_N};z_i]
+\in\mathbb{R}^{(N+2)\times M}.
+\label{eq:input}
+\end{equation}
+Matica má $N+2$ riadkov: $N$ udalostí, jeden vektor CLS a jeden vektor akcie. Každý riadok má $M$ čísel. CLS neobsahuje novú správu z trhu. Počas učenia sa naučí zbierať informácie z ostatných riadkov \serref{kap.~2.2.3, rovnica~(3)}.
+
+\input{referat/figures/ser}
+
+Attention vytvorí zo vstupnej matice $Z$ tri nové matice: $Q=ZW_Q$, $K=ZW_K$ a $V=ZW_V$. Matice $W_Q$, $W_K$ a $W_V$ obsahujú učené váhy. Matice $Q$ a $K$ slúžia na výpočet vzťahov medzi vstupmi. Matica $V$ obsahuje hodnoty, ktoré sa podľa týchto vzťahov spoja. Výpočet má tvar
+\begin{equation}
+\operatorname{Attention}(Q,K,V)=
+\operatorname{softmax}\!\left(\frac{QK^{\mathsf T}}{\sqrt{d_k}}\right)V.
+\label{eq:attention}
+\end{equation}
+Súčin $QK^{\mathsf T}$ dáva skóre pre dvojice vstupov. Hodnota $d_k$ je rozmer riadkov matice $K$ a používa sa na úpravu mierky skóre. Funkcia softmax prevedie skóre v každom riadku na kladné váhy so súčtom jedna. Podľa týchto váh sa spoja hodnoty z $V$ \serref{kap.~2.2.3, rovnice~(4)--(5)}.
+
+Model používa viac hláv attention. Každá hlava má vlastné váhy a môže sa naučiť iné vzťahy. Ich výstupy sa spoja a ďalej upravia učenou lineárnou transformáciou. Po viacerých vrstvách sa vyberie výsledný vektor na mieste CLS. Ten slúži ako zhrnutie vstupu. Súčasťou vstupu je aj akcia, preto môže byť výsledok pre rovnaké udalosti pri rôznych firmách iný \serref{kap.~2.2.3, rovnice~(4)--(6)}.
+
+Táto časť modelu už nečíta slová pôvodného článku. Pracuje s číselnými vektormi udalostí a akcie. Jazykový model teda pripravuje udalosti a samostatná neurónová sieť ich používa na odhad výnosu.
+
+\subsection{Denný a týždenný model}
+Denný model spojí udalosti jedného dňa do jedného vektora. Týždenný model má dva kroky. Najprv vytvorí takéto zhrnutie pre každý deň. Potom spojí denné vektory pomocou ďalšej attention. Pri tomto kroku používa nový vektor \emph{Weekly-CLS}. Výstup na jeho mieste predstavuje celý týždeň. Model tak zvlášť spracúva udalosti v jednom dni a vzťahy medzi dňami \serref{kap.~2.2.3, rovnice~(7)--(9), obr.~3}.
+
+Výsledný vektor $u_{i,t}$ dostane viacvrstvový perceptrón, skrátene MLP. Je to neurónová sieť s viacerými vrstvami. Jej výstupom je jedno číslo:
+\begin{equation}
+\widehat r_{i,t+1}=\operatorname{MLP}_{\theta}(u_{i,t})\in\mathbb{R}.
+\end{equation}
+Skryté vrstvy používajú nelineárne funkcie. Vďaka nim sa model môže učiť aj zložitejšie vzťahy. Posledná vrstva je lineárna, takže výsledok môže byť kladný aj záporný. Model nemá samostatnú časť na klasifikáciu smeru alebo na odhad pravdepodobnosti budúcej udalosti \serref{kap.~2.2.4, rovnice~(10)--(11)}.
+
+\subsection{Učenie a vysvetlenie výsledku}
+Pri učení sa menia vektory subjektov, činností, objektov a burzových akcií. Menia sa aj váhy attention a parametre MLP. Pri učení porovnáva predikovaný výnos so skutočným. Používa strednú kvadratickú chybu, označovanú MSE:
+\begin{equation}
+\mathcal{L}_{\mathrm{MSE}}(\theta)=\frac{1}{n}
+\sum_{j=1}^{n}\bigl(\widehat r_j-r_j\bigr)^2.
+\label{eq:loss}
+\end{equation}
+Symbol $n$ je počet tréningových príkladov a $j$ označuje jeden príklad. Od predikcie sa odčíta skutočný výnos, rozdiel sa umocní na druhú a potom sa vypočíta priemer. Väčšie chyby tak majú väčšiu váhu. Spätné šírenie chyby upravuje parametre modelu tak, aby táto chyba klesala. Autori používajú aj regularizáciu L2, ktorá obmedzuje veľké hodnoty parametrov. Toto učenie nemení váhy modelu GPT, ktorý získava udalosti z textu \serref{kap.~2.2.5, rovnica~(12); kap.~3.2}.
+
+Autori tiež skúmajú, ktoré vstupy ovplyvňujú výsledok modelu. Používajú súčin vstupu a gradientu, $x_k\,\partial f/\partial x_k$. Gradient opisuje, ako sa predikcia mení pri malej zmene vstupu. Túto hodnotu počítajú pre vektory udalostí aj entít \serref{kap.~4.1, rovnica~(16)}. Takto možno lepšie pochopiť správanie modelu. Podľa môjho hodnotenia to však ešte nedokazuje, že daná udalosť spôsobila zmenu ceny na trhu. Ani vysoká váha attention sama osebe takýto dôkaz neposkytuje.

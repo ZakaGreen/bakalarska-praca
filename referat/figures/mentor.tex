@@ -1,0 +1,15 @@
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+\node[box,text width=4.3cm,minimum height=1.2cm] (in) at (0,0) {Správy a udalosti\\do týždňa $n-1$};
+\node[box,text width=4.3cm,minimum height=1.2cm] (pred) at (5.5,0) {Študenti predikujú:\\udalosti a poradie};
+\node[box,text width=4.3cm,minimum height=1.2cm] (feedback) at (5.5,-1.9) {Výsledok týždňa $n$:\\učitelia hodnotia};
+\node[box,text width=4.3cm,minimum height=1.2cm] (update) at (0,-1.9) {Agenti pre uvažovanie:\\úprava stratégií};
+\draw[arr] (in)--(pred);
+\draw[arr] (pred)--(feedback);
+\draw[arr] (feedback)--(update);
+\draw[arr,dashed] (update.west)--++(-0.55,0)|- (in.west);
+\end{tikzpicture}
+\caption{Cyklus MENTOR: predikcia týždňa $n$ a úprava stratégií pre ďalšie obdobie. Vlastné spracovanie podľa \mentorref{obr.~3 a algoritmus~1}.}
+\label{fig:mentor}
+\end{figure}

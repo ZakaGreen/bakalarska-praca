@@ -1,0 +1,36 @@
+\section{MENTOR a porovnanie so SER}
+\subsection{Ako funguje MENTOR}
+MENTOR má tri hlavné úlohy. Najprv hľadá udalosti, o ktorých sa diskutuje v správach. Potom predikuje budúce udalosti. Nakoniec odhaduje poradie výkonnosti odvetvových indexov. Odvetvový index sleduje skupinu firiem z jedného odvetvia. Výstup teda hovorí, ktoré odvetvia majú podľa modelu dosiahnuť lepší výsledok. Nejde o percentuálny výnos jednej akcie \mentorref{kap.~3, rovnice~(1)--(3)}.
+
+Článok používa aj pojem naratív. Ide o spôsob, akým sa udalosti opisujú a spájajú do spoločného príbehu alebo témy. Tento príbeh sa môže časom meniť. MENTOR používa viac agentov, teda častí systému s rôznymi úlohami. Agent na hľadanie udalostí spracúva veľa správ. Používa krátkodobú a dlhodobú pamäť. Vybrané udalosti potom pomocou vyhľadávania a zoradenia spája s pôvodnými správami. Autori tento postup porovnávajú aj so zoskupovaním podobných textových vektorov \mentorref{kap.~3--4.2}.
+
+Ďalší agenti majú úlohy študenta, učiteľa a agenta pre uvažovanie. Študenti predikujú udalosti a poradie odvetví. Používajú textové stratégie $S_{\mathrm{event}}$ a $S_{\mathrm{ranking}}$. Sú to postupy opísané slovami, podľa ktorých vytvárajú predikciu. Keď sú známe skutočné výsledky, učitelia opíšu chyby. Agenti pre uvažovanie potom podľa tohto hodnotenia upravia textové stratégie \mentorref{kap.~4.4, rovnice~(4)--(7)}.
+
+Tento postup využíva TextGrad. Spätná väzba má podobu textu a mení textové stratégie. Nejde o bežné spätné šírenie číselnej chyby, ktoré by menilo váhy LLM. Podľa algoritmu~1 sa výsledok týždňa $n$ predikuje z informácií predchádzajúceho týždňa. Skutočný výsledok týždňa $n$ sa použije až neskôr na úpravu stratégie. Pri predikcii teda ešte nesmie byť známy \mentorref{kap.~4.4, algoritmus~1}.
+
+\input{referat/figures/mentor}
+
+\subsection{Porovnanie a výsledky}
+\begin{table}[H]
+\centering
+\caption{Porovnanie oboch metód. Vlastné spracovanie podľa \serref{kap.~2--3} a \mentorref{kap.~3--5}.}
+\label{tab:comparison}
+\small
+\begin{tabularx}{\textwidth}{@{}p{2.35cm}YY@{}}
+\toprule
+Vlastnosť & SER & MENTOR\\
+\midrule
+Vstup & Články spojené s firmou a identifikátor jej akcie & Správy, známe udalosti a minulé výnosy odvetví\\
+Výstup & Odhad výnosu akcie na ďalší deň alebo týždeň & Budúce udalosti a poradie odvetvových indexov\\
+Úloha LLM & Získanie udalostí z textu a ich kontrola & Hľadanie a predikcia udalostí, hodnotenie chýb\\
+Čo sa mení & Vektory, attention a MLP podľa chyby výnosu & Textové postupy podľa hodnotenia učiteľov\\
+Overenie & Test na ďalšom roku, výsledky portfólií a regresie & Testy po týždňoch, zhoda udalostí, poradie a portfóliá\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Autori testujú MENTOR na čínskych príspevkoch vplyvných autorov a na anglických finančných správach z rokov 2023--2024. Pri predikcii udalostí zisťujú, ktoré predikované udalosti sa zhodujú so skutočnými. Pri poradí odvetví používajú Spearmanovu koreláciu, Kendallov koeficient a zhodu odvetví na prvých miestach. Prvé dve metriky porovnávajú predikované poradie so skutočným \mentorref{kap.~5.1--5.2}. Tieto testy však neoverujú, či by napríklad predikcia pravdepodobnosti 70\,\% zodpovedala približne 70\,\% skutočných prípadov. To by bola samostatná kontrola kalibrácie pravdepodobností.
+
+Na 11 odvetviach S\&P dosahuje MENTOR\_O1 Spearmanovu koreláciu 0,221. Metóda Momentum dosahuje 0,159. Pri zhode troch najvyšších odvetví sú výsledky 0,394 a 0,364. Na deviatich odvetviach A-share má MENTOR\_O1 koreláciu 0,173. Pri zhode prvých troch odvetví však dosahuje 0,439 oproti 0,444 pri Momentum. MENTOR teda nie je lepší vo všetkých ukazovateľoch \mentorref{tab.~3}.
+
+Autori uvádzajú aj výsledky portfólií a skúšajú rôzne dvojice modelov učiteľ--študent \mentorref{kap.~5.6, tab.~5--6}. Tieto výnosy nemožno priamo porovnať s výsledkami SER. Články používajú iné obdobia, aktíva a testy. Niektoré presné definície metrík a vzory pokynov sú v samostatných prílohách MENTOR. Pri príprave tejto práce tieto prílohy neboli dostupné na overenie.

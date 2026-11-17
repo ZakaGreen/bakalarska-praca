@@ -1,0 +1,17 @@
+\section{SER: úloha a údaje}
+SER dostáva udalosti spojené s konkrétnou akciou za určité obdobie. Jeho úlohou je odhadnúť výnos tejto akcie v ďalšom období. Autori skúmajú dva prípady: ďalší obchodný deň a ďalší týždeň. Výstupom je číslo, preto ide o regresnú úlohu.
+
+Akciu označíme indexom $i$ a obdobie indexom $t$. Symbol $E_{i,t}$ znamená súbor udalostí pre túto akciu a obdobie. Symbol $s_i$ označuje identifikátor akcie. Model môžeme zapísať podľa rovnice~(1) pôvodného článku takto:
+\begin{equation}
+\widehat r_{i,t+1}=f_{\theta}(E_{i,t},s_i).
+\label{eq:task}
+\end{equation}
+Symbol $\widehat r_{i,t+1}$ je predikovaný výnos a $\theta$ sú parametre, ktoré sa model učí. Pri učení sa predikcia porovnáva so skutočným výnosom. Znamienko ukazuje, či model očakáva kladný alebo záporný výnos. Toto číslo však nie je pravdepodobnosťou rastu \serref{kap.~2.2.1 a 2.2.4}.
+
+Autori získali výnosy akcií z databázy CRSP. Novinové články pochádzajú z ProQuest a Factiva. Hlavný experiment používa údaje z rokov 2003--2022. Po spracovaní zostalo 301\,409 príkladov typu firma--deň a 4\,355 akcií. Jeden taký príklad spája jednu firmu s jedným dňom. Týždenný výnos sa počíta z denných výnosov podľa vzťahu $r_{\text{týždeň}}=\prod_d(1+r_d)-1$. Súčin zahŕňa platné obchodné dni daného týždňa \serref{kap.~3.1, rovnica~(13)}.
+
+Článok sa najprv priradí ku konkrétnej firme. Systém hľadá jej názov v texte a porovnáva aj podobné zápisy názvu. Ide o približné porovnávanie textov, po anglicky \emph{fuzzy matching}. Názov firmy sa musí objaviť aspoň dvakrát. Vyberie sa firma s najlepšou zhodou. Firmy s nejasnými názvami sa vylúčia. Udalosti z priradených článkov sa potom spoja podľa firmy a dátumu \serref{kap.~3.1; príloha OA.1.3}.
+
+Predikčný model navyše používa číselný vektor identifikátora akcie. Tento vektor sa učí spolu s modelom. Pomáha rozlišovať firmy, pretože rovnaká udalosť môže mať pre rôzne firmy odlišný význam. Priradenie článku firme a učenie tohto vektora sú teda dva rôzne kroky. Tento postup sám nevyhľadáva všetky firmy, na ktoré môže udalosť nepriamo pôsobiť \serref{kap.~2.2.1}.
+
+Články z obdobia $t$ sa spájajú s výnosom v období $t+1$. Pri vlastnom experimente však bude dôležitý aj presný čas. Treba vedieť, kedy správa vyšla, kedy ju systém spracoval a kedy bolo možné vykonať obchod. Samotný dátum správy nestačí na overenie ceny, za ktorú sa dalo reálne vstúpiť do pozície.

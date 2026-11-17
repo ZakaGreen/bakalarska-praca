@@ -1,0 +1,56 @@
+{
+  "date": "2026-11-17",
+  "revision": "simple Slovak",
+  "pdf": "output/pdf/referat.pdf",
+  "pages": 12,
+  "pdf_sha256": "e5494aa94f44a4980141c8ebc04ec351ba4d2663b25e6dd84c0e365b42d4f3a9",
+  "build": "latexmk + pdfLaTeX + biber: success",
+  "unresolved_references": false,
+  "overfull_or_underfull_boxes": false,
+  "bibliography_entries": 2,
+  "doi_links": [
+    "https://doi.org/10.1631/FITEE.2500608",
+    "https://doi.org/10.48550/arXiv.2512.19484"
+  ],
+  "visual_review": {
+    "all_pages_reviewed": true,
+    "render_directory": "/tmp/referat-simple-render",
+    "final_iteration_reviewed_pages": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ]
+  },
+  "remaining_warnings": [
+    "FEIstyle: Command \\@footnotemark has changed",
+    "microtype: Unable to apply patch footnote; document has no footnotes"
+  ],
+  "source_sha256": {
+    "referat.tex": "a44c293fe3f344ab725a057a4a42032fd677b1982cd0910811bfd645c3b61a08",
+    "FEIstyle.cls": "47e83e842eb57a5f22563826d382c00d926306e7a82074dd6d67d91e26cbf9b5",
+    "referat/bibliography.bib": "6994d149acb77d94fdcb3258956d965d0e9ed762ecf040a119731426925bbe68",
+    "referat/sections/01-introduction.tex": "208819c8a0a99b4dc7ed6cae27f384c9e6c12d41cd0d75a7756555063d8153ff",
+    "referat/sections/02-task-data.tex": "af087760bfce733a4b91cfa6e6c3f6a32ee5a616e9050cbe6fe948a4b67c88b0",
+    "referat/sections/03-extraction.tex": "67e9b4efe8a9efb49fc82a3741a2a9df5910fe9f878418f337caa8d97cf2fc59",
+    "referat/sections/04-architecture.tex": "81f8e30a46f2d3dd4573bb403af5503261aca14fe26a75f1e8374e91c8e23a23",
+    "referat/sections/05-experiments.tex": "6567b20a9e43ef89234c61477efe0fe062d5689fbe332fc235a541e16d340f59",
+    "referat/sections/06-mentor.tex": "8b46d9030a0b78fef3d67b10e0ca007ddeae0a732b9a4ed303dc7ed4bff0bfe7",
+    "referat/sections/07-application.tex": "42631eb197bfb34a1a6fa81f2127071246179e55e71ce7e743b0129316cd536e",
+    "referat/sections/08-conclusion.tex": "18af68f3cbb42923d1161c9c2ae7e6454b56c98db006642c999a21b5d5fbd14e",
+    "referat/figures/mentor.tex": "2c2ba8da659654eb52ca819b80b57e6496ceb50f271c6dc4a5abe9e05178498b",
+    "referat/figures/ser.tex": "9e994552a2d118870742d45679b678b6188e218d264c5574501a7f9dfa8957bf"
+  },
+  "archive_rebuild": {
+    "clean_extraction_build_success": true,
+    "all_12_pages_text_matches_delivered_pdf": true
+  }
+}

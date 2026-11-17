@@ -1,0 +1,24 @@
+\section{SER: získanie udalostí z textu}
+\subsection{Čo robí jazykový model}
+SER používa hotový veľký jazykový model, označovaný skratkou LLM. Autori zvolili \texttt{gpt-3.5-turbo-0125}. Model číta článok a vyberá z neho udalosti. Každú udalosť zapisuje ako trojicu \emph{subjekt--akcia--objekt}. Subjekt označuje, kto alebo čo vykonáva činnosť. Akcia opisuje túto činnosť a objekt označuje, čoho sa týka. Slovo akcia tu znamená činnosť, nie akciu obchodovanú na burze. LLM v tomto kroku nepredikuje výnos \serref{kap.~2.1 a 3.1}.
+
+Záznam má šesť polí. Základnú trojicu tvoria \texttt{subject}, \texttt{action} a \texttt{object}. Polia \texttt{subject\_link} a \texttt{object\_link} obsahujú odkazy na entity. Pole \texttt{context} obsahuje časť pôvodného textu, ktorá pomáha overiť význam udalosti. Základom vstupu do prediktora zostáva trojica \serref{kap.~2.1; príloha OA.2}.
+
+Pokyn pre LLM určuje formát JSON a obsahuje príklady správnych odpovedí. Model používa tieto príklady pri spracovaní zadania. Jeho váhy sa tým nemenia. Odkazy na databázu DBpedia pomáhajú spojiť rôzne názvy tej istej osoby, firmy alebo inej entity. Entita je tu pomenovaný prvok udalosti. Ak sa jedna firma v textoch objaví pod viacerými názvami, mala by dostať rovnaký identifikátor \serref{kap.~2.1}.
+
+Výsledok kontroluje ďalšie použitie LLM v úlohe hodnotiteľa. Kontroluje formát, potrebné polia a súlad s pôvodným textom. Chybný záznam sa opraví alebo vytvorí znovu. Ak ani po viacerých pokusoch neprejde kontrolou, systém ho vyradí. Autori tiež ručne porovnali náhodne vybrané skupiny výsledkov s pôvodnými článkami \serref{kap.~2.1 a 3.1}. Takáto kontrola pomáha nájsť chyby. Neznamená však, že všetky získané udalosti sú správne. Chyba v udalosti môže neskôr ovplyvniť aj odhad výnosu.
+
+\subsection{Ako sa z udalostí stanú čísla}
+Najprv sa odstránia opakované udalosti v tom istom príklade. Slová opisujúce činnosti sa prevedú na základný tvar. Tento krok sa volá lematizácia. Potom sa pomocou BERT prevedú na vektory, teda zoznamy čísel. Algoritmus DBSCAN ich rozdelí do skupín podobných výrazov. Podobné zápisy činností sa tak zjednotia. Subjekty a objekty dostanú identifikátory podľa odkazov DBpedia. Činnosti dostanú vlastné identifikátory \serref{príloha OA.1.4}.
+
+V prediktore má každý identifikátor svoj učený vektor. Takýto vektor sa nazýva \emph{embedding}. Má $M$ čísel a počas učenia sa mení. Vektor celej udalosti vzniká podľa vzťahu
+\begin{equation}
+z_e=e_{\mathrm{subjekt}}+e_{\mathrm{akcia}}-e_{\mathrm{objekt}}
+\in\mathbb{R}^{M}.
+\label{eq:event}
+\end{equation}
+Autori tento postup spájajú s metódou TransE. Vektory subjektu a činnosti sa sčítajú a vektor objektu sa odčíta. Výsledkom je jeden vektor udalosti. Subjekt a objekt tu majú odlišné úlohy. Rovnaké entity môžu používať tie isté učené parametre vo viacerých udalostiach \serref{kap.~2.2.2, rovnica~(2)}.
+
+Článok vysvetľuje TransE pomocou vzťahu, pri ktorom sa súčet vektorov subjektu a činnosti približuje k vektoru objektu. Pre predikciu však používa priamo rozdiel z rovnice~\eqref{eq:event}. Pri opise učenia autori uvádzajú minimalizáciu chyby výnosu. Samostatnú stratovú funkciu pre TransE preto do opisu nepridávam, pretože nie je v tejto časti článku potvrdená \serref{kap.~2.2.2 a 2.2.5}.
+
+Aj identifikátor burzovej akcie má učený vektor $z_i\in\mathbb{R}^{M}$. Model si ho vytvára z tréningových príkladov. Tento vektor nie je zoznamom priamo zadaných údajov o firme, napríklad jej cien alebo zisku. Vektory udalostí a akcií sa učia pre spoločný cieľ: lepšie odhadnúť ďalší výnos.
